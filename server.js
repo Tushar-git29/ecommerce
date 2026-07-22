@@ -2,23 +2,40 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const PORT = 2000;
+const cors = require("cors");
 require("dotenv").config();
 const connect_data = require("./config/db");
 // const user_cpy = require("./models/user_cpy");
 // const staff = require("./models/staff");
 connect_data();
-require("./routes/authRoutes");
+const todoList = require("./routes/todoList");
+// const authRoutes = require("./routes/authRoutes");
+const products = require("./routes/products");
 
+app.use(
+  cors({
+    origin: [
+      "http://127.0.0.1:5500",
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://cool-kitsune-a6dbed.netlify.app",
+    ], // Specify the allowed origin
+  }),
+);
 const registeredUser = require("./models/User");
 
 app.use(express.json());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+const apiLogger = require("./middleware/loggerMiddleware");
 const authRoutes = require("./routes/authRoutes");
-
+app.use(apiLogger);
 // use router
 app.use("/", authRoutes);
+app.use("/landingPage", products);
+app.use("/todo", todoList);
+
+// app.use("/home", products);
 // app.use((req, res, next) => {
 //   const registeredEmail = registeredUser.findOne({
 //     email: req.body,

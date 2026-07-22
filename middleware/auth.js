@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
   const token = authHeader.split(" ")[1];
   console.log("token", token);
   try {
-    const userData = jwt.verify(token, "SECRET_KEY");
+    const userData = jwt.verify(token, process.env.SECRET_KEY);
     req.user = userData;
     console.log(userData);
     next();
